@@ -7,7 +7,7 @@ from gtts import gTTS
 from urllib.parse import quote as url_quote
 import gdown
 model_url = 'https://drive.google.com/drive/folders/10AQQEwlLg-DUEozX7be4DY8F4EKFzY8j?usp=sharing' 
-output_path = 'models/Summarisation_Model' 
+output_path = 'Models/Summarisation_Model' 
 gdown.download(model_url, output_path, quiet=False)
 
 
