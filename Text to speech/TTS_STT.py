@@ -1,17 +1,11 @@
 import speech_recognition as sr
 from transformers import pipeline
 from pydub import AudioSegment
-import os
 from gtts import gTTS
 from IPython.display import Audio
 
 # Initialize the summarizer using Hugging Face pipeline
 summarizer = pipeline("summarization")
-
-# Save the summarizer model to a directory
-model_save_path = "/content/summarization_model"
-summarizer.save_pretrained(model_save_path)
-print(f"Model saved at {model_save_path}")
 
 # Initialize the speech recognizer
 recognizer = sr.Recognizer()
@@ -105,7 +99,7 @@ def main(audio_file_path):
         print("No audio content to process.")
 
 # Path to the audio file (MP3 or WAV)
-audio_file_path = "/content/summary.mp3"  # Replace with your audio file path
+audio_file_path = "/content/your_audio_file.mp3"  # Replace with your audio file path
 
 # Run the main function
 main(audio_file_path)
