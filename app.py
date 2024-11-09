@@ -84,17 +84,21 @@ def process_audio():
         })
 
     return jsonify({"error": "Failed to process audio"}), 500
-
-if __name__ == "__main__":
-    app.run(debug=True, host='0.0.0.0', port=5000)
-
 from flask import Flask, render_template
+from pyngrok import ngrok
 
+# Initialize Flask app
 app = Flask(__name__)
 
+# Define route for index page
 @app.route('/')
 def index():
-    return render_template('index.html')  
+    return render_template('index.html')
 
+# Open a ngrok tunnel to the Flask app
+public_url = ngrok.connect(5000)
+print(" * ngrok tunnel \"{}\" -> \"http://127.0.0.1:5000\"".format(public_url))
+
+# Run the Flask app
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0', port=5000)
