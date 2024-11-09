@@ -5,6 +5,7 @@ import speech_recognition as sr
 from pydub import AudioSegment
 from gtts import gTTS
 from urllib.parse import quote as url_quote
+pip install gdown
 
 
 # Initialize Flask app
