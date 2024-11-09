@@ -5,10 +5,6 @@ import speech_recognition as sr
 from pydub import AudioSegment
 from gtts import gTTS
 from urllib.parse import quote as url_quote
-pip install gdown
-
-
-
 import gdown
 model_url = 'https://drive.google.com/drive/folders/10AQQEwlLg-DUEozX7be4DY8F4EKFzY8j?usp=sharing' 
 output_path = 'models/Summarisation_Model' 
