@@ -1,5 +1,3 @@
-!apt-get install ffmpeg
-
 import speech_recognition as sr
 from transformers import pipeline
 from pydub import AudioSegment
@@ -9,6 +7,11 @@ from IPython.display import Audio
 
 # Initialize the summarizer using Hugging Face pipeline
 summarizer = pipeline("summarization")
+
+# Save the summarizer model to a directory
+model_save_path = "/content/summarization_model"
+summarizer.save_pretrained(model_save_path)
+print(f"Model saved at {model_save_path}")
 
 # Initialize the speech recognizer
 recognizer = sr.Recognizer()
