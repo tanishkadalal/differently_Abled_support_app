@@ -1,42 +1,57 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_file
+from werkzeug.utils import secure_filename
 import os
-from transformers import pipeline
-import speech_recognition as sr
 from pydub import AudioSegment
+import speech_recognition as sr
+from transformers import pipeline
 from gtts import gTTS
-from urllib.parse import quote as url_quote
-import gdown
-import keras
 
-
-model_url = 'https://drive.google.com/drive/folders/10AQQEwlLg-DUEozX7be4DY8F4EKFzY8j?usp=sharing' 
-output_path = 'Models/Summarisation_Model' 
-gdown.download(model_url, output_path, quiet=False)
-
-
-# Initialize Flask app
+# Initialize the Flask app
 app = Flask(__name__)
 
-# Initialize the summarizer
+# Path for saving uploaded audio files
+UPLOAD_FOLDER = 'uploads/'
+ALLOWED_EXTENSIONS = {'mp3', 'wav'}
+
+# Initialize the summarizer using Hugging Face pipeline
 summarizer = pipeline("summarization")
 
 # Initialize the speech recognizer
 recognizer = sr.Recognizer()
 
+# Ensure the upload folder exists
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+def allowed_file(filename):
+    """
+    Check if the uploaded file is allowed.
+    """
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 def convert_mp3_to_wav(mp3_file_path):
+    """
+    Convert MP3 file to WAV format using pydub.
+    """
     wav_file_path = mp3_file_path.replace(".mp3", ".wav")
     try:
+        # Load the MP3 file and export it as WAV
         audio = AudioSegment.from_mp3(mp3_file_path)
         audio.export(wav_file_path, format="wav")
         return wav_file_path
     except Exception as e:
+        print(f"Error converting MP3 to WAV: {e}")
         return None
 
 def audio_to_text(audio_file_path):
+    """
+    Convert audio file to text using SpeechRecognition library.
+    """
     with sr.AudioFile(audio_file_path) as source:
+        # Record the audio from the file
         audio_data = recognizer.record(source)
     
     try:
+        # Convert audio to text using Google's speech-to-text
         text = recognizer.recognize_google(audio_data)
         return text
     except sr.UnknownValueError:
@@ -45,69 +60,69 @@ def audio_to_text(audio_file_path):
         return ""
 
 def summarize_text(text):
+    """
+    Summarizes the provided text.
+    """
     if len(text.split()) > 0:
         summary = summarizer(text, max_length=150, min_length=50, do_sample=False)
         return summary[0]['summary_text']
-    return "No content to summarize."
+    else:
+        return "No content to summarize."
 
 def text_to_speech(text):
+    """
+    Convert text to speech using gTTS (Google Text-to-Speech).
+    """
     tts = gTTS(text=text, lang='en')
-    tts.save("/tmp/summary.mp3")
-    return "/tmp/summary.mp3"
-
-from transformers import pipeline
-
-summarizer = pipeline("summarization", model="facebook/bart-large-cnn", framework="pt")
-
+    output_file = os.path.join(UPLOAD_FOLDER, "summary.mp3")
+    tts.save(output_file)
+    return output_file
 
 @app.route('/')
 def index():
-    return "Welcome to the Speech-to-Text & Summarizer API!"
+    return "Welcome to the Speech to Text & Summarizer API!"
 
-@app.route('/process-audio', methods=['POST'])
+@app.route('/process_audio', methods=['POST'])
 def process_audio():
-    if 'file' not in request.files:
+    """
+    Endpoint to process the uploaded audio file, convert to text, summarize, and convert summary to speech.
+    """
+    # Check if a file was uploaded
+    if 'audio' not in request.files:
         return jsonify({"error": "No file part"}), 400
-    
-    file = request.files['file']
-    if file.filename == '':
-        return jsonify({"error": "No selected file"}), 400
-    
-    # Save the file
-    file_path = os.path.join('/tmp', file.filename)
+
+    file = request.files['audio']
+
+    # If the user does not select a file or selects a non-allowed file type
+    if file.filename == '' or not allowed_file(file.filename):
+        return jsonify({"error": "Invalid file type, only mp3 and wav allowed"}), 400
+
+    # Secure the file name and save the file
+    filename = secure_filename(file.filename)
+    file_path = os.path.join(UPLOAD_FOLDER, filename)
     file.save(file_path)
 
-    # Convert to WAV if it's MP3
-    if file.filename.endswith('.mp3'):
-        file_path = convert_mp3_to_wav(file_path)
+    # If the uploaded file is MP3, convert it to WAV
+    if file_path.endswith(".mp3"):
+        wav_file_path = convert_mp3_to_wav(file_path)
+        if wav_file_path:
+            file_path = wav_file_path  # Update the path to the new WAV file
 
-    # Process the audio file
-    text = audio_to_text(file_path)
-    if text:
-        summary = summarize_text(text)
-        summary_audio_path = text_to_speech(summary)
-        return jsonify({
-            "summary": summary,
-            "audio_summary": summary_audio_path
-        })
-
-    return jsonify({"error": "Failed to process audio"}), 500
+    # Step 1: Convert audio to text
+    transcribed_text = audio_to_text(file_path)
     
-from flask import Flask, render_template
-from pyngrok import ngrok
+    if transcribed_text:
+        # Step 2: Summarize the transcribed text
+        summary = summarize_text(transcribed_text)
+        
+        # Step 3: Convert the summary to speech
+        summary_audio_path = text_to_speech(summary)
 
-# Initialize Flask app
-app = Flask(__name__)
+        # Step 4: Return the audio file of the summary
+        return send_file(summary_audio_path, as_attachment=True)
 
-# Define route for index page
-@app.route('/')
-def index():
-    return render_template('index.html')
+    else:
+        return jsonify({"error": "No speech detected in the audio file"}), 400
 
-# Open a ngrok tunnel to the Flask app
-public_url = ngrok.connect(5000)
-print(" * ngrok tunnel \"{}\" -> \"http://127.0.0.1:5000\"".format(public_url))
-
-# Run the Flask app
-if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+if __name__ == "__main__":
+    app.run(debug=True)
