@@ -55,6 +55,11 @@ def text_to_speech(text):
     tts.save("/tmp/summary.mp3")
     return "/tmp/summary.mp3"
 
+from transformers import pipeline
+
+summarizer = pipeline("summarization", model="facebook/bart-large-cnn", framework="pt")
+
+
 @app.route('/')
 def index():
     return "Welcome to the Speech-to-Text & Summarizer API!"
@@ -87,6 +92,7 @@ def process_audio():
         })
 
     return jsonify({"error": "Failed to process audio"}), 500
+    
 from flask import Flask, render_template
 from pyngrok import ngrok
 
