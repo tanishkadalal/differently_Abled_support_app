@@ -1,1 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accessible Text Summarizer</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
+</head>
+<body>
+
+    <!-- Navigation -->
+    <header>
+        <nav>
+            <h1>Text Summarizer</h1>
+            <ul>
+                <li><a href="#home" class="smooth-scroll">Home</a></li>
+                <li><a href="#features" class="smooth-scroll">Features</a></li>
+                <li><a href="#how-it-works" class="smooth-scroll">How It Works</a></li>
+                <li><a href="#accessibility" class="smooth-scroll">Accessibility</a></li>
+                <li><a href="#contact" class="smooth-scroll">Contact Us</a></li>
+            
+                <li><a href="#logos" class="smooth-scroll">Logos</a></li>
+                           </ul>
+            <div class="accessibility-controls">
+                <button id="theme-toggle-btn" class="cta-btn">
+                    Toggle Dark Mode
+                </button>
+                <button onclick="increaseFont()">A+</button>
+                <button onclick="decreaseFont()">A-</button>
+            </div>
+        </nav>
+    </header>
+ 
+
+
+    <!-- Hero Section -->
+    <section id="home" class="hero-section" data-aos="fade-up">
+        <div class="hero-text">
+            <h2>Transform Your Text. Make it Accessible for Everyone</h2>
+            <p>Effortless summarization with accessibility features tailored for all users.</p>
+            <button class="cta-btn smooth-scroll" onclick="document.getElementById('summarizer').scrollIntoView({ behavior: 'smooth' })">Get Started</button>
+        </div>
+        <div class="hero-image" data-aos="fade-left">
+            <img src="img.jpeg" alt="Accessible Summarization" />
+        </div>
+    </section>
+
+    <!-- Summarizer Tool Section -->
+    <section id="summarizer" class="summarizer-section" data-aos="fade-up">
+        <h2>Summarize Your Text</h2>
+        <textarea id="inputText" placeholder="Paste or type your text here..." rows="10"></textarea>
+        <div class="summary-options">
+            <label for="summaryLength">Summary Length:</label>
+            <select id="summaryLength">
+                <option value="short">Short</option>
+                <option value="medium">Medium</option>
+                <option value="detailed">Detailed</option>
+            </select>
+            <button class="cta-btn" onclick="summarizeText()">Summarize</button>
+        </div>
+        <div id="summaryOutput" class="summary-output"></div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features-section">
+        <h2>Features</h2>
+        <div class="feature-cards">
+            <div class="feature-card" data-aos="zoom-in">
+                <h3>Adjustable Summary Length</h3>
+                <p>Choose from short, medium, or detailed summaries to fit your needs.</p>
+            </div>
+            <div class="feature-card" data-aos="zoom-in" data-aos-delay="100">
+                <h3>Text-to-Speech</h3>
+                <p>Convert the summaries to speech for audio accessibility.</p>
+            </div>
+            <div class="feature-card" data-aos="zoom-in" data-aos-delay="200">
+                <h3>Multi-Language Support</h3>
+                <p>Summarize texts in various languages with our tool.</p>
+            </div>
+            <div class="feature-card" data-aos="zoom-in" data-aos-delay="300">
+                <h3>Customizable Accessibility</h3>
+                <p>Adjust text size and contrast to make it easier to read.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" data-aos="fade-up">
+        <h2>How It Works</h2>
+        <ol>
+            <li>Paste or upload your text.</li>
+            <li>Choose the summary length and other preferences.</li>
+            <li>Click "Summarize" to get your concise summary.</li>
+        </ol>
+    </section>
+
+    <!-- Accessibility Section -->
+    <section id="accessibility" data-aos="fade-up">
+        <h2>Accessibility</h2>
+        <p>Our tool is built to be accessible, offering text-to-speech, font adjustments, and high-contrast options for all users.</p>
+    </section>
+
+
+    <!-- Logos Section -->
+    <section id="logos" class="logos-section">
+        <h2>Our Partners</h2>
+        <div class="logo-grid">
+            <!-- Placeholder logos -->
+            <img src="logo1.jpg" alt="Logo 1">
+            <img src="logo2.jpg" alt="Logo 2">
+            <img src="logo3.jpg" alt="Logo 3">
+            <img src="logo4.jpg" alt="Logo 4">
+        </div>
+    </section>
+
+    <!-- Team Section with Columns -->
+    <section id="team" class="team-section">
+        <h2>Meet Our Team</h2>
+        <div class="team-grid">
+            <div class="team-member">
+                <img src="team1.jpg" alt="Team Member 1">
+                <h3>John Doe</h3>
+                <p>Lead Developer</p>
+            </div>
+            <div class="team-member">
+                <img src="team2.jpg" alt="Team Member 2">
+                <h3>Jane Smith</h3>
+                <p>Project Manager</p>
+            </div>
+            <!-- Add more team members as needed -->
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" data-aos="fade-up">
+        <h2>Contact Us</h2>
+        <form>
+            <label for="name">Name:</label>
+            <input type="text" id="name" required>
+            <label for="email">Email:</label>
+            <input type="email" id="email" required>
+            <label for="message">Message:</label>
+            <textarea id="message" rows="5" required></textarea>
+            <button class="cta-btn" type="submit">Send Message</button>
+        </form>
+    </section>
+
+    <footer>
+        <p>&copy; 2024 Accessible Text Summarizer</p>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script src="scripts.js"></script>
+    <script>
+        AOS.init();
+    </script>
+</body>
+</html>
 
